@@ -2,7 +2,6 @@
  * [TODO] Step 0: Import the dependencies, fs and papaparse
  */
 
-
 /**
  * [TODO] Step 1: Parse the Data
  *      Parse the data contained in a given file into a JavaScript objectusing the modules fs and papaparse.
@@ -39,34 +38,36 @@ function parseData(filename) {
 function cleanData(csv) {
     const rows = csv.data;
 
-    const cleanedRows = rows.filter((row) => {
-        for (const [k, v] of Object.entries(row)) {
-            if (k == 'user_gender') continue;
+    const cleanedRows = rows
+        .filter((row) => {
+            for (const [k, v] of Object.entries(row)) {
+                if (k === 'user_gender') continue;
 
-            if (v == '') return false;
-        }
-        return true;
-    }).map((row) => {
-        const copyRow = {...row};
-        copyRow.user = {
-            user_id: Number(copyRow.user_id),
-            user_age: Number(copyRow.user_age),
-            user_country: copyRow.user_country,
-            user_gender: copyRow.user_gender,
-        };
-        delete copyRow.user_id;
-        delete copyRow.user_age;
-        delete copyRow.user_country;
-        delete copyRow.user_gender;
+                if (v === '') return false;
+            }
+            return true;
+        })
+        .map((row) => {
+            const copyRow = { ...row };
+            copyRow.user = {
+                user_id: Number(copyRow.user_id),
+                user_age: Number(copyRow.user_age),
+                user_country: copyRow.user_country,
+                user_gender: copyRow.user_gender,
+            };
+            delete copyRow.user_id;
+            delete copyRow.user_age;
+            delete copyRow.user_country;
+            delete copyRow.user_gender;
 
-        copyRow.review_id = Number(copyRow.review_id);
-        copyRow.num_helpful_votes = Number(copyRow.num_helpful_votes);
-        copyRow.rating = Number(copyRow.rating);
-        copyRow.review_date = new Date(copyRow.review_date);
-        copyRow.verified_purchase = copyRow.verified_purchase == 'true';
+            copyRow.review_id = Number(copyRow.review_id);
+            copyRow.num_helpful_votes = Number(copyRow.num_helpful_votes);
+            copyRow.rating = Number(copyRow.rating);
+            copyRow.review_date = new Date(copyRow.review_date);
+            copyRow.verified_purchase = copyRow.verified_purchase === 'true';
 
-        return copyRow;
-    })
+            return copyRow;
+        });
 
     return cleanedRows;
 }
@@ -111,12 +112,11 @@ function sentimentAnalysisApp(cleaned) {
             };
         }
 
-        if (sentiment == 'positive') appMap[app].positive++;
-        if (sentiment == 'neutral') appMap[app].neutral++;
-        if (sentiment == 'negative') appMap[app].negative++;
+        if (sentiment === 'positive') appMap[app].positive++;
+        if (sentiment === 'neutral') appMap[app].neutral++;
+        if (sentiment === 'negative') appMap[app].negative++;
     });
     return Object.values(appMap);
-    
 }
 
 /**
@@ -141,11 +141,10 @@ function sentimentAnalysisLang(cleaned) {
             };
         }
 
-        if (sentiment == 'positive') languageMap[language].positive++;
-        if (sentiment == 'neutral') languageMap[language].neutral++;
-        if (sentiment == 'negative') languageMap[language].negative++;
-
-    })
+        if (sentiment === 'positive') languageMap[language].positive++;
+        if (sentiment === 'neutral') languageMap[language].neutral++;
+        if (sentiment === 'negative') languageMap[language].negative++;
+    });
 
     return Object.values(languageMap);
 }
@@ -172,13 +171,13 @@ function summaryStatistics(cleaned) {
         mostUsedDevice: '',
         mostDevices: 0,
         avgRating: 0,
-    }
+    };
 
     const appMap = {};
 
     cleaned.forEach((row) => {
         const app = row.app_name;
-        if(!appMap[app]) appMap[app] = 0;
+        if (!appMap[app]) appMap[app] = 0;
         appMap[app]++;
     });
 
@@ -192,13 +191,13 @@ function summaryStatistics(cleaned) {
     const deviceMap = {};
     cleaned.forEach((row) => {
         const app = row.app_name;
-        if (app == answers.mostReviewedApp) {
+        if (app === answers.mostReviewedApp) {
             const device = row.device_type;
 
             if (!deviceMap[device]) deviceMap[device] = 0;
             deviceMap[device]++;
         }
-    })
+    });
 
     for (const device in deviceMap) {
         if (deviceMap[device] > answers.mostDevices) {
@@ -206,17 +205,17 @@ function summaryStatistics(cleaned) {
             answers.mostUsedDevice = device;
         }
     }
-    
+
     let sum = 0;
     let num = 0;
-    
+
     cleaned.forEach((row) => {
         const app = row.app_name;
-        if (app == answers.mostReviewedApp) {
+        if (app === answers.mostReviewedApp) {
             sum += row.rating;
             num++;
         }
-    })
+    });
 
     answers.avgRating = sum / num;
 
@@ -232,5 +231,5 @@ module.exports = {
     sentimentAnalysisApp,
     sentimentAnalysisLang,
     summaryStatistics,
-    labelSentiment
+    labelSentiment,
 };
